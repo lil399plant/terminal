@@ -11,6 +11,7 @@ export default async function handler(req) {
   }
 
   const body = await req.json()
+  console.log('shortcuts-sync body:', JSON.stringify(body))
   const rows = []
 
   for (const [metricName, samples] of Object.entries(body)) {
