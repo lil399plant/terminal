@@ -11,22 +11,28 @@ export default async function handler(req) {
   }
 
   const body = await req.json()
-  console.log('shortcuts-sync body:', JSON.stringify(body))
-
-  // Echo mode: return the raw body so we can inspect what Shortcuts sends
-  return new Response(JSON.stringify({ received: body }), { status: 200 })
-
   const rows = []
 
-  for (const [metricName, samples] of Object.entries(body)) {
-    if (!Array.isArray(samples)) continue
-    for (const s of samples) {
-      rows.push({
-        metric_name: metricName,
-        recorded_at: new Date(s.start ?? s.date).toISOString(),
-        value: s,
-        source: 'Apple Watch',
-      })
+  // Single sample mode: {metric, value, start, end}
+  if (body.metric && body.start) {
+    rows.push({
+      metric_name: body.metric,
+      recorded_at: new Date(body.start).toISOString(),
+      value: { value: body.value, start: body.start, end: body.end },
+      source: 'Apple Watch',
+    })
+  } else {
+    // Batch mode: {sleep_analysis: [{value, start, end}, ...]}
+    for (const [metricName, samples] of Object.entries(body)) {
+      if (!Array.isArray(samples)) continue
+      for (const s of samples) {
+        rows.push({
+          metric_name: metricName,
+          recorded_at: new Date(s.start ?? s.date).toISOString(),
+          value: s,
+          source: 'Apple Watch',
+        })
+      }
     }
   }
 
