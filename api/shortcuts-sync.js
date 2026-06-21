@@ -12,6 +12,10 @@ export default async function handler(req) {
 
   const body = await req.json()
   console.log('shortcuts-sync body:', JSON.stringify(body))
+
+  // Echo mode: return the raw body so we can inspect what Shortcuts sends
+  return new Response(JSON.stringify({ received: body }), { status: 200 })
+
   const rows = []
 
   for (const [metricName, samples] of Object.entries(body)) {
