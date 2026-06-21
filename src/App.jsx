@@ -7,6 +7,7 @@ import PoopForm from './components/poop/PoopForm'
 import PoopCard from './components/poop/PoopCard'
 import { getEntry, getTodayKey } from './data/storage'
 
+
 const TABS = ['sleep', 'nutrition', 'poop']
 
 const S = {
@@ -75,7 +76,6 @@ const S = {
 export default function App() {
   const today = getTodayKey()
   const [tab, setTab] = useState('sleep')
-  const [sleepEntry, setSleepEntry] = useState(() => getEntry('sleep', today))
   const [nutritionEntry, setNutritionEntry] = useState(() => getEntry('nutrition', today))
   const [poopEntry, setPoopEntry] = useState(() => getEntry('poop', today))
 
@@ -95,8 +95,8 @@ export default function App() {
       <div style={S.content}>
         {tab === 'sleep' && (
           <>
-            <SleepCard entry={sleepEntry} />
-            <SleepForm onSave={setSleepEntry} />
+            <SleepCard date={today} />
+            <SleepForm />
           </>
         )}
         {tab === 'nutrition' && (
